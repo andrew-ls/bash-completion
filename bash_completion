@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for __import in ~/.bash_completion.d/*; do
+	test -f "${__import}" && . "${__import}"
+done
+unset -v __import
