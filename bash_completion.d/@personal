@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for __import in ~/.bash_completion.d/@personal.d/*; do
+	test -f "${__import}" && . "${__import}"
+done
+unset -v __import
