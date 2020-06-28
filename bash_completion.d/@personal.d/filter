@@ -1,0 +1,3 @@
+#!/bin/sh
+
+complete -W "$(_parse_help filter --help)" filter
