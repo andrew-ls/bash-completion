@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if test "$(command -v pipx)"; then
+	. <(register-python-argcomplete -s bash pipx)
+	while read _pipx_cli_app; do
+		. <(register-python-argcomplete -s bash "${_pipx_cli_app}")
+	done < <(
+		pipx list \
+		| sed -n 's/^[[:space:]]*- //p'
+	)
+	unset -v _pipx_cli_app
+fi
