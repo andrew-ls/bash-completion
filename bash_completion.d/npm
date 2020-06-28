@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if test "$(command -v npm)"; then
+	. <(npm completion)
+fi
