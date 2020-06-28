@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+_sync_ini_filter () {
+	local OPTIONS='--shell'
+
+	COMPREPLY=()
+
+	local cur cword
+	_get_comp_words_by_ref cur cword
+
+	case "${cword}" in
+		(1)
+			local file; for file in "${cur}"*.ini; do
+				if test -f "${file}"; then
+					COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+				fi
+			done
+			;;
+		(2)
+			COMPREPLY=(
+				"${COMPREPLY[@]}"
+				$(compgen -W "${OPTIONS}" -- "${cur}")
+			)
+			;;
+	esac
+} \
+&& complete -F _sync_ini_filter sync-ini-filter
