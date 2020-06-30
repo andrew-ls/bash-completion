@@ -1,0 +1,3 @@
+#!/bin/sh
+
+complete -W '2600 5200 7800 chaf coco col cpc gb64 gba gbx gcom gen gg intv jag lynx mo5 msx1 msx2 mtx n64 nes ngpx oric pce pico psid samc sms snes spc sv vboy vect wsx' goodtools-flags
