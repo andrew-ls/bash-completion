@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if test "$(command -v v4l2-ctl)"; then
+	complete -W "$(_parse_help v4l2-ctl --help)" v4l2-ctl
+fi
