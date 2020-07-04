@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+_vdfplus () {
+	local ENCODINGS='ascii base64 hex latin1 ucs2 utf16le utf8'
+
+	COMPREPLY=()
+
+	local cur prev
+	_get_comp_words_by_ref cur prev
+
+	case "${prev}" in
+
+		( -d \
+		| --i \
+		| --in \
+		| --ind \
+		| --inde \
+		| --inden \
+		| --indent \
+		| --indenta \
+		| --indentat \
+		| --indentati \
+		| --indentatio \
+		| --indentation \
+		| -s \
+		| --s \
+		| --se \
+		| --sep \
+		| --sepa \
+		| --separ \
+		| --separa \
+		| --separat \
+		| --separato \
+		| --separator )
+			COMPREPLY=( ${cur:+"${cur}"} )
+			;;
+
+		( -e \
+		| --e \
+		| --en \
+		| --enc \
+		| --enco \
+		| --encod \
+		| --encodi \
+		| --encodin \
+		| --encoding \
+		| -o \
+		| --o \
+		| --ou \
+		| --out \
+		| --outp \
+		| --outpu \
+		| --output \
+		| --output- \
+		| --output-e \
+		| --output-en \
+		| --output-enc \
+		| --output-enco \
+		| --output-encod \
+		| --output-encodi \
+		| --output-encodin \
+		| --output-encoding )
+			COMPREPLY=( $(compgen -W "${ENCODINGS}" -- "${cur}") )
+			;;
+
+		(*)
+			local file; for file in "${cur}"*; do
+				if test "$(command -v xdg-mime)"; then \
+					if test -f "${file}" && {
+						local mimetype="$(xdg-mime query filetype "${file}")"
+						test "${mimetype}" = 'text/plain' \
+						|| test "${mimetype}" = 'application/json'
+					}; then
+						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+					fi
+				else
+					if test -f "${file}"; then
+						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+					fi
+				fi
+			done
+			COMPREPLY=(
+				"${COMPREPLY[@]}"
+				$(compgen -W "$(_parse_help vdfplus --help)" -- "${cur}")
+			)
+			;;
+
+	esac
+
+} \
+&& complete -F _vdfplus vdfplus
