@@ -3,6 +3,42 @@
 _vdfplus () {
 	local ENCODINGS='ascii base64 hex latin1 ucs2 utf16le utf8'
 
+	compopt -o filenames
+
+	__check_files () {
+		local cur_restore="${cur}"
+		local IFS=$'\n'
+
+		local file; for file in $(compgen -f "${cur}"); do
+			cur="${file}"; _expand
+
+			if test -d "${cur}"; then \
+				COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+			elif test -f "${cur}"; then
+				if test "$(command -v xdg-mime)"; then \
+					local mimetype="$(xdg-mime query filetype "${cur}")"
+
+					if \
+						test "${mimetype}" = 'text/plain' \
+						|| test "${mimetype}" = 'application/json'
+					then
+						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+					fi
+				else
+					COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+				fi
+			fi
+		done
+
+		cur="${cur_restore}"
+	}
+	__check_options () {
+		COMPREPLY=(
+			"${COMPREPLY[@]}"
+			$(compgen -W "$(_parse_help vdfplus --help)" -- "${cur}")
+		)
+	}
+
 	COMPREPLY=()
 
 	local cur prev
@@ -64,28 +100,14 @@ _vdfplus () {
 			;;
 
 		(*)
-			local file; for file in "${cur}"*; do
-				if test "$(command -v xdg-mime)"; then \
-					if test -f "${file}" && {
-						local mimetype="$(xdg-mime query filetype "${file}")"
-						test "${mimetype}" = 'text/plain' \
-						|| test "${mimetype}" = 'application/json'
-					}; then
-						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
-					fi
-				else
-					if test -f "${file}"; then
-						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
-					fi
-				fi
-			done
-			COMPREPLY=(
-				"${COMPREPLY[@]}"
-				$(compgen -W "$(_parse_help vdfplus --help)" -- "${cur}")
-			)
+			case "${cur}" in
+				(-*) __check_options ;;
+				(*) __check_files ;;
+			esac
 			;;
 
 	esac
 
+	unset -f __check_files __check_options
 } \
 && complete -F _vdfplus vdfplus
