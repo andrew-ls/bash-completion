@@ -3,6 +3,8 @@
 _vdfplus () {
 	local ENCODINGS='ascii base64 hex latin1 ucs2 utf16le utf8'
 
+	COMPREPLY=()
+
 	compopt -o filenames
 
 	__check_files () {
@@ -13,7 +15,7 @@ _vdfplus () {
 			cur="${file}"; _expand
 
 			if test -d "${cur}"; then \
-				COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+				COMPREPLY+=( "${file}" )
 			elif test -f "${cur}"; then
 				if test "$(command -v xdg-mime)"; then \
 					local mimetype="$(xdg-mime query filetype "${cur}")"
@@ -22,10 +24,10 @@ _vdfplus () {
 						test "${mimetype}" = 'text/plain' \
 						|| test "${mimetype}" = 'application/json'
 					then
-						COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+						COMPREPLY+=( "${file}" )
 					fi
 				else
-					COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+					COMPREPLY+=( "${file}" )
 				fi
 			fi
 		done
@@ -33,13 +35,8 @@ _vdfplus () {
 		cur="${cur_restore}"
 	}
 	__check_options () {
-		COMPREPLY=(
-			"${COMPREPLY[@]}"
-			$(compgen -W "$(_parse_help vdfplus --help)" -- "${cur}")
-		)
+		COMPREPLY+=( $(compgen -W "$(_parse_help vdfplus --help)" -- "${cur}") )
 	}
-
-	COMPREPLY=()
 
 	local cur prev
 	_get_comp_words_by_ref cur prev
@@ -68,7 +65,7 @@ _vdfplus () {
 		| --separat \
 		| --separato \
 		| --separator )
-			COMPREPLY=( ${cur:+"${cur}"} )
+			COMPREPLY+=( ${cur:+"${cur}"} )
 			;;
 
 		( -e \
@@ -96,7 +93,7 @@ _vdfplus () {
 		| --output-encodi \
 		| --output-encodin \
 		| --output-encoding )
-			COMPREPLY=( $(compgen -W "${ENCODINGS}" -- "${cur}") )
+			COMPREPLY+=( $(compgen -W "${ENCODINGS}" -- "${cur}") )
 			;;
 
 		(*)

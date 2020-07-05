@@ -12,15 +12,12 @@ _sync_ini_filter () {
 		(1)
 			local file; for file in "${cur}"*.ini; do
 				if test -f "${file}"; then
-					COMPREPLY=( "${COMPREPLY[@]}" "${file}" )
+					COMPREPLY+=( "${file}" )
 				fi
 			done
 			;;
 		(2)
-			COMPREPLY=(
-				"${COMPREPLY[@]}"
-				$(compgen -W "${OPTIONS}" -- "${cur}")
-			)
+			COMPREPLY+=( $(compgen -W "${OPTIONS}" -- "${cur}") )
 			;;
 	esac
 } \
